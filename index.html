@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>ポーカーカスタムタイマー</title>
+	<style>
+		:root {
+			--bg-color: #121212;
+			--container-bg: #1e1e1e;
+			--card-bg: #262626;
+			--border-color: #333333;
+			--text-color: #ffffff;
+			--text-muted: #aaaaaa;
+			--accent-color: #00bfff;
+			--accent-hover: #009acd;
+			--danger-color: #ff4d4d;
+			--danger-hover: #cc0000;
+			--success-color: #28a745;
+			--warning-color: #ffc107;
+			--warning-hover: #e0a800;
+		}
+
+		body {
+			font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+			background-color: var(--bg-color);
+			color: var(--text-color);
+			margin: 0;
+			min-height: 100vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.clock-container {
+			width: 90%;
+			max-width: 900px;
+			padding: 40px;
+			background-color: var(--container-bg);
+			border-radius: 0.5rem;
+			box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.5);
+			text-align: center;
+			box-sizing: border-box;
+			position: relative;
+		}
+
+		.digital-clock {
+			font-size: clamp(5rem, 18vw, 12rem);
+			font-family: "Nunito", sans-serif;
+			font-weight: 900;
+			letter-spacing: 10px;
+			font-variant-numeric: tabular-nums;
+			color: #00bfff;
+			text-shadow: 0 0 15px rgba(0,191,255,0.5);
+			margin: 20px 0;
+		}
+
+		/* 画面切り替え用 */
+		.screen {
+			display: none;
+		}
+		.screen.active {
+			display: block;
+		}
+
+		/* 共通ボタン・フォームスタイル */
+		button {
+			cursor: pointer;
+			font-weight: bold;
+			border: none;
+			border-radius: 4px;
+			transition: background 0.2s;
+		}
+
+		.btn-primary {
+			background-color: var(--accent-color);
+			color: #000;
+			padding: 12px 24px;
+			font-size: 1.1rem;
+		}
+		.btn-primary:hover {
+			background-color: var(--accent-hover);
+			color: #fff;
+		}
+
+		.btn-secondary {
+			background-color: #444;
+			color: #fff;
+			padding: 8px 16px;
+		}
+		.btn-secondary:hover {
+			background-color: #555;
+		}
+
+		.btn-danger {
+			background-color: var(--danger-color);
+			color: #fff;
+			padding: 8px 16px;
+		}
+		.btn-danger:hover {
+			background-color: var(--danger-hover);
+		}
+
+		/* 準備画面（テーブル設定） */
+		.config-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 20px;
+		}
+
+		.table-responsive {
+			max-height: 350px;
+			overflow-y: auto;
+			margin-bottom: 25px;
+			border: 1px solid var(--border-color);
+			border-radius: 4px;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			text-align: center;
+			background-color: var(--card-bg);
+		}
+
+		th, td {
+			padding: 12px 8px;
+			border-bottom: 1px solid var(--border-color);
+		}
+
+		th {
+			background-color: #2c2c2c;
+			color: var(--accent-color);
+			position: sticky;
+			top: 0;
+			z-index: 10;
+		}
+
+		input[type="number"] {
+			width: 80px;
+			padding: 8px;
+			background-color: #121212;
+			border: 1px solid var(--border-color);
+			color: var(--text-color);
+			text-align: center;
+			border-radius: 4px;
+			font-size: 1rem;
+		}
+		input[type="number"]:focus {
+			outline: none;
+			border-color: var(--accent-color);
+		}
+
+		/* タイマー画面レイアウト */
+		.timer-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 10px;
+		}
+
+		.level-badge {
+			font-size: 1.5rem;
+			color: var(--accent-color);
+			font-weight: bold;
+			letter-spacing: 2px;
+		}
+
+		.blinds-info {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 15px;
+			background-color: var(--card-bg);
+			padding: 20px;
+			border-radius: 8px;
+			margin-bottom: 25px;
+			border: 1px solid var(--border-color);
+		}
+
+		.blind-item .label {
+			font-size: 0.9rem;
+			color: var(--text-muted);
+			margin-bottom: 5px;
+		}
+
+		.blind-item .value {
+			font-size: 1.8rem;
+			font-weight: bold;
+			color: var(--text-color);
+		}
+
+		/* 微調整ボタン群 */
+		.time-adjust-controls {
+			display: flex;
+			justify-content: center;
+			gap: 10px;
+			margin-bottom: 25px;
+			flex-wrap: wrap;
+		}
+
+		.btn-adjust {
+			background-color: #2a2a2a;
+			color: var(--text-color);
+			border: 1px solid var(--border-color);
+			padding: 8px 14px;
+			font-size: 0.95rem;
+		}
+		.btn-adjust:hover {
+			background-color: #3a3a3a;
+			border-color: var(--accent-color);
+		}
+
+		/* メインコントロールボタン群 */
+		.main-controls {
+			display: flex;
+			justify-content: center;
+			gap: 15px;
+			flex-wrap: wrap;
+			align-items: center;
+		}
+
+		.btn-control {
+			padding: 12px 30px;
+			font-size: 1.2rem;
+			border-radius: 6px;
+		}
+
+		.btn-start {
+			background-color: var(--success-color);
+			color: #fff;
+		}
+		.btn-start:hover {
+			background-color: #218838;
+		}
+
+		.btn-pause {
+			background-color: var(--warning-color);
+			color: #000;
+		}
+		.btn-pause:hover {
+			background-color: var(--warning-hover);
+		}
+
+		.btn-reset {
+			background-color: #555;
+			color: #fff;
+		}
+		.btn-reset:hover {
+			background-color: #666;
+		}
+
+		/* 通知バナーオーバーレイ */
+		#notification-banner {
+			display: none;
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			background: linear-gradient(135deg, rgba(0, 191, 255, 0.95), rgba(0, 122, 204, 0.95));
+			color: #000;
+			padding: 20px;
+			box-sizing: border-box;
+			text-align: center;
+			font-weight: bold;
+			box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+			z-index: 100;
+			border-top-left-radius: 0.5rem;
+			border-top-right-radius: 0.5rem;
+			cursor: pointer;
+			animation: slideDown 0.3s ease-out;
+		}
+		#notification-banner .banner-title {
+			font-size: 1.4rem;
+			margin-bottom: 5px;
+		}
+		#notification-banner .banner-sub {
+			font-size: 0.95rem;
+			opacity: 0.85;
+		}
+
+		@keyframes slideDown {
+			from { transform: translateY(-100%); opacity: 0; }
+			to { transform: translateY(0); opacity: 1; }
+		}
+
+		@media (max-width: 768px) {
+			.clock-container {
+				width: 95%;
+				padding: 20px 15px; 
+			}
+
+			.digital-clock {
+				letter-spacing: 4px;
+				margin: 15px 0;
+			}
+
+			.config-header {
+				flex-direction: column;
+				gap: 15px;
+				align-items: stretch;
+			}
+
+			.blinds-info {
+				grid-template-columns: 1fr; 
+				gap: 10px;
+				padding: 15px;
+			}
+
+			.blind-item .value {
+				font-size: 1.5rem;
+			}
+
+			input[type="number"] {
+				width: 60px;
+				padding: 6px;
+				font-size: 0.9rem;
+			}
+
+			th, td {
+				padding: 8px 4px;
+				font-size: 0.9rem;
+			}
+
+			.btn-control, .btn-primary {
+				width: 100%; 
+				box-sizing: border-box;
+			}
+
+			.main-controls, .time-adjust-controls {
+				flex-direction: column;
+				gap: 10px;
+			}
+		}
+	</style>
+</head>
+<body>
+
+	<div class="clock-container">
+		<!-- 通知バナー -->
+		<div id="notification-banner" onclick="closeBanner()">
+			<div class="banner-title" id="banner-title">🔔 レベルアップ！アンティが上がりました！</div>
+			<div class="banner-sub">クリックまたはタップして閉じる</div>
+		</div>
+
+		<!-- 1. 準備画面 (CONFIG) -->
+		<div id="config-screen" class="screen active">
+			<div class="config-header">
+				<h2>ポーカー ブラインド設定</h2>
+				<button class="btn-primary" onclick="addLevelRow()">＋ レベル追加</button>
+			</div>
+			
+			<div class="table-responsive">
+				<table id="blind-table">
+					<thead>
+						<tr>
+							<th>Lv</th>
+							<th>時間 (分)</th>
+							<th>BB (ビッグ)</th>
+							<th>SB (スモール)</th>
+							<th>アンティ</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody id="table-body">
+						<!-- 初期データ -->
+					</tbody>
+				</table>
+			</div>
+
+			<button class="btn-primary" style="width: 100%; padding: 15px; font-size: 1.2rem;" onclick="startTimerApp()">タイマーを開始する</button>
+		</div>
+
+		<!-- 2. タイマー画面 -->
+		<div id="timer-screen" class="screen">
+			<div class="timer-header">
+				<div class="level-badge" id="display-level">LEVEL 1</div>
+				<button class="btn-secondary" onclick="backToConfig()">設定に戻る</button>
+			</div>
+
+			<div class="blinds-info">
+				<div class="blind-item">
+					<div class="label">スモール (SB)</div>
+					<div class="value" id="display-sb">0</div>
+				</div>
+				<div class="blind-item">
+					<div class="label">ビッグ (BB)</div>
+					<div class="value" id="display-bb">0</div>
+				</div>
+				<div class="blind-item">
+					<div class="label">アンティ (ANTE)</div>
+					<div class="value" id="display-ante">0</div>
+				</div>
+			</div>
+
+			<!-- デジタル時計 -->
+			<div class="digital-clock" id="timer-display">00:00</div>
+
+			<!-- 時間の微調整ボタン -->
+			<div class="time-adjust-controls">
+				<button class="btn-adjust" onclick="adjustTime(-30)">-30秒</button>
+				<button class="btn-adjust" onclick="adjustTime(-60)">-1分</button>
+				<button class="btn-adjust" onclick="adjustTime(-300)">-5分</button>
+			</div>
+			<div class="time-adjust-controls">
+				<button class="btn-adjust" onclick="adjustTime(30)">+30秒</button>
+				<button class="btn-adjust" onclick="adjustTime(60)">+1分</button>
+				<button class="btn-adjust" onclick="adjustTime(300)">+5分</button>
+			</div>
+
+			<!-- メインコントロールボタン -->
+			<div class="main-controls">
+				<button class="btn-control btn-reset" onclick="resetCurrentLevel()">リセット</button>
+				<button class="btn-control btn-start" id="toggle-btn" onclick="toggleTimer()">スタート</button>
+				<button class="btn-control btn-secondary" onclick="nextLevelManual()">次のレベルへ ⏩</button>
+			</div>
+		</div>
+	</div>
+
+<script>
+	// サンプル初期データ
+	const initialLevels = [
+		{ time: 15, sb: 100, bb: 200, ante: 200 },
+		{ time: 15, sb: 200, bb: 400, ante: 400 },
+		{ time: 15, sb: 300, bb: 600, ante: 600 },
+		{ time: 15, sb: 400, bb: 800, ante: 800 },
+		{ time: 15, sb: 500, bb: 1000, ante: 1000 }
+	];
+
+	let levelsData = [];
+	let currentLevelIndex = 0;
+	let remainingSeconds = 0;
+	let timerInterval = null;
+	let isRunning = false;
+	let audioCtx = null;
+
+	// 起動時にテーブル初期化
+	window.addEventListener('DOMContentLoaded', () => {
+		initialLevels.forEach(lvl => addLevelRow(lvl.time, lvl.bb, lvl.sb, lvl.ante));
+	});
+
+	function addLevelRow(time = 15, bb = 1000, sb = 500, ante = 500) {
+		const tbody = document.getElementById('table-body');
+		const tr = document.createElement('tr');
+
+		// Lv表示用セル
+		const tdNum = document.createElement('td');
+		tdNum.className = 'lv-num';
+		tr.appendChild(tdNum);
+
+		// 各入力項目の定義
+		const fields = [
+			{ className: 'input-time', value: time, min: 1, max: 999 },
+			{ className: 'input-bb', value: bb, min: 0},
+			{ className: 'input-sb', value: sb, min: 0},
+			{ className: 'input-ante', value: ante, min: 0}
+		];
+
+		fields.forEach(field => {
+			const td = document.createElement('td');
+			const input = document.createElement('input');
+			input.type = 'number';
+			input.className = field.className;
+			
+			// 確実に数値に変換し、最小値を下回らないようにガード
+			input.value = Math.max(field.min, Number(field.value) || 0);
+			input.min = field.min;
+
+			// リアルタイムでのマイナス値防止
+			input.addEventListener('input', (e) => {
+				let val = Number(e.target.value);
+				if (val < field.min) val = field.min;
+				if (field.max && val > field.max) val = field.max;
+				e.target.value = val;
+			});
+
+			td.appendChild(input);
+			tr.appendChild(td);
+		});
+
+		// 削除ボタン用セル
+		const tdAction = document.createElement('td');
+		const deleteBtn = document.createElement('button');
+		deleteBtn.className = 'btn-danger';
+		deleteBtn.style.padding = '6px 10px';
+		deleteBtn.type = 'button';
+		deleteBtn.innerText = '削除';
+		deleteBtn.addEventListener('click', () => removeLevelRow(deleteBtn));
+		tdAction.appendChild(deleteBtn);
+		tr.appendChild(tdAction);
+
+		tbody.appendChild(tr);
+		updateLevelNumbers();
+	}
+
+	function removeLevelRow(btn) {
+		const tbody = document.getElementById('table-body');
+		if (tbody.rows.length <= 1) {
+			alert("最低1つのレベルが必要です。");
+			return;
+		}
+		btn.closest('tr').remove();
+		updateLevelNumbers();
+	}
+
+	function updateLevelNumbers() {
+		const rows = document.querySelectorAll('#table-body tr');
+		rows.forEach((row, idx) => {
+			row.querySelector('.lv-num').innerText = idx + 1;
+		});
+	}
+
+	function collectTableData() {
+		const rows = document.querySelectorAll('#table-body tr');
+		const data = [];
+		rows.forEach(row => {
+			const time = Math.max(1, parseInt(row.querySelector('.input-time').value) || 1);
+			const bb = Math.max(0, parseInt(row.querySelector('.input-bb').value) || 0);
+			const sb = Math.max(0, parseInt(row.querySelector('.input-sb').value) || 0);
+			const ante = Math.max(0, parseInt(row.querySelector('.input-ante').value) || 0);
+			data.push({ time, bb, sb, ante });
+		});
+		return data;
+	}
+
+	// タイマー画面へ遷移・初期化
+	function startTimerApp() {
+		levelsData = collectTableData();
+		if (levelsData.length === 0) {
+			alert("ブラインド設定を正しく入力してください。");
+			return;
+		}
+		currentLevelIndex = 0;
+		loadLevel(currentLevelIndex);
+
+		document.getElementById('config-screen').classList.remove('active');
+		document.getElementById('timer-screen').classList.add('active');
+	}
+
+	function backToConfig() {
+		pauseTimer();
+		document.getElementById('timer-screen').classList.remove('active');
+		document.getElementById('config-screen').classList.add('active');
+		closeBanner();
+	}
+
+	function loadLevel(index) {
+		if (index >= levelsData.length) {
+			alert("すべてのレベルが終了しました！");
+			currentLevelIndex = levelsData.length - 1;
+			return;
+		}
+		const lvl = levelsData[index];
+		document.getElementById('display-level').innerText = `LEVEL ${index + 1}`;
+		document.getElementById('display-sb').innerText = lvl.sb.toLocaleString();
+		document.getElementById('display-bb').innerText = lvl.bb.toLocaleString();
+		document.getElementById('display-ante').innerText = lvl.ante.toLocaleString();
+		
+		remainingSeconds = Number(lvl.time) * 60;
+		updateDisplay();
+	}
+
+	function updateDisplay() {
+		const mins = Math.floor(remainingSeconds / 60);
+		const secs = remainingSeconds % 60;
+		document.getElementById('timer-display').innerText = 
+			`${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+	}
+
+	function toggleTimer() {
+		if (isRunning) {
+			pauseTimer();
+		} else {
+			startTimer();
+		}
+	}
+
+	function startTimer() {
+		if (isRunning) return;
+		initAudio();
+		isRunning = true;
+		const btn = document.getElementById('toggle-btn');
+		btn.innerText = "一時停止";
+		btn.classList.remove('btn-start');
+		btn.classList.add('btn-pause');
+
+		timerInterval = setInterval(() => {
+			if (remainingSeconds > 0) {
+				remainingSeconds--;
+				updateDisplay();
+			}
+
+			if (remainingSeconds <= 0) {
+				clearInterval(timerInterval);
+				isRunning = false;
+				playAlarmSound();
+				
+				currentLevelIndex++;
+				if (currentLevelIndex < levelsData.length) {
+					showBanner(`LEVEL ${currentLevelIndex + 1} へ移行します（アンティ・ブラインド更新）`);
+					loadLevel(currentLevelIndex);
+				} else {
+					showBanner("ファイナルレベルが終了しました！お疲れ様でした！");
+					document.getElementById('display-level').innerText = "FINISH";
+				}
+
+				const btn = document.getElementById('toggle-btn');
+				btn.innerText = "スタート";
+				btn.classList.remove('btn-pause');
+				btn.classList.add('btn-start');
+			}
+		}, 1000);
+	}
+
+	function pauseTimer() {
+		if (!isRunning) return;
+		clearInterval(timerInterval);
+		isRunning = false;
+		const btn = document.getElementById('toggle-btn');
+		btn.innerText = "スタート";
+		btn.classList.remove('btn-pause');
+		btn.classList.add('btn-start');
+	}
+
+	function resetCurrentLevel() {
+		pauseTimer();
+		closeBanner();
+		const lvl = levelsData[currentLevelIndex];
+		if (lvl) {
+			remainingSeconds = Number(lvl.time) * 60;
+			updateDisplay();
+		}
+	}
+
+	function adjustTime(sec) {
+		remainingSeconds = Math.max(0, Number(remainingSeconds) + Number(sec));
+		updateDisplay();
+	}
+
+	function nextLevelManual() {
+		pauseTimer();
+		closeBanner();
+		currentLevelIndex++;
+		if (currentLevelIndex >= levelsData.length) {
+			alert("すでに最後のレベルです。");
+			currentLevelIndex = levelsData.length - 1;
+		}
+		loadLevel(currentLevelIndex);
+	}
+
+	function initAudio() {
+		if (!audioCtx) {
+			audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+		}
+		if (audioCtx.state === 'suspended') {
+			audioCtx.resume();
+		}
+	}
+
+	function playAlarmSound() {
+		try {
+			initAudio();
+			const osc = audioCtx.createOscillator();
+			const gain = audioCtx.createGain();
+			osc.type = 'sine';
+			osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+			osc.frequency.setValueAtTime(440, audioCtx.currentTime + 0.2);
+			
+			gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+			gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+
+			osc.connect(gain);
+			gain.connect(audioCtx.destination);
+
+			osc.start();
+			osc.stop(audioCtx.currentTime + 0.6);
+		} catch (e) {
+			console.log("Audio not supported or blocked", e);
+		}
+	}
+
+	function showBanner(message) {
+		const banner = document.getElementById('notification-banner');
+		const titleElem = document.getElementById('banner-title');
+		titleElem.innerText = `🔔 ${message}`;
+		banner.style.display = 'block';
+	}
+
+	function closeBanner() {
+		const banner = document.getElementById('notification-banner');
+		banner.style.display = 'none';
+	}
+</script>
+</body>
+</html>
