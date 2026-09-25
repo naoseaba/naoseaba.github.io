@@ -554,7 +554,6 @@
 		const lvl = levelsData[index];
 		document.getElementById('display-level').innerText = `LEVEL ${index + 1}`;
 		
-		// レベル変更時もシークレット状態の見た目を維持
 		if (isSecretSpeedActive) {
 			document.getElementById('display-level').classList.add('secret-active');
 		} else {
@@ -586,6 +585,7 @@
 
 	function startTimer() {
 		if (isRunning) return;
+		initAudio();
 		isRunning = true;
 		const btn = document.getElementById('toggle-btn');
 		btn.innerText = "一時停止";
@@ -603,6 +603,7 @@
 			if (remainingSeconds <= 0) {
 				clearInterval(timerInterval);
 				isRunning = false;
+				playAlarmSound();
 				
 				currentLevelIndex++;
 				if (currentLevelIndex < levelsData.length) {
@@ -655,6 +656,37 @@
 			currentLevelIndex = levelsData.length - 1;
 		}
 		loadLevel(currentLevelIndex);
+	}
+
+	function initAudio() {
+		if (!audioCtx) {
+			audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+		}
+		if (audioCtx.state === 'suspended') {
+			audioCtx.resume();
+		}
+	}
+
+	function playAlarmSound() {
+		try {
+			initAudio();
+			const osc = audioCtx.createOscillator();
+			const gain = audioCtx.createGain();
+			osc.type = 'sine';
+			osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+			osc.frequency.setValueAtTime(440, audioCtx.currentTime + 0.2);
+			
+			gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+			gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+
+			osc.connect(gain);
+			gain.connect(audioCtx.destination);
+
+			osc.start();
+			osc.stop(audioCtx.currentTime + 0.6);
+		} catch (e) {
+			console.log("Audio not supported or blocked", e);
+		}
 	}
 
 	function showBanner(message) {
