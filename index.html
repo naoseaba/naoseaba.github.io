@@ -26,41 +26,50 @@
 			background-color: var(--bg-color);
 			color: var(--text-color);
 			margin: 0;
-			min-height: 100vh;
+			height: 100dvh; /* スマホのアドレスバー等を考慮した高さ */
 			display: flex;
 			justify-content: center;
 			align-items: center;
+			overflow: hidden; /* 全体スクロールを防止 */
 		}
 
 		.clock-container {
-			width: 90%;
+			width: 92%;
 			max-width: 900px;
-			padding: 40px;
+			max-height: 96dvh;
+			padding: 24px 20px;
 			background-color: var(--container-bg);
 			border-radius: 0.5rem;
 			box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.5);
 			text-align: center;
 			box-sizing: border-box;
 			position: relative;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
 		}
 
 		.digital-clock {
-			font-size: clamp(5rem, 18vw, 12rem);
+			font-size: clamp(3.5rem, 15vw, 9rem);
 			font-family: "Nunito", sans-serif;
 			font-weight: 900;
-			letter-spacing: 10px;
+			letter-spacing: 6px;
 			font-variant-numeric: tabular-nums;
 			color: var(--accent-color);
 			text-shadow: 0 0 15px rgba(0,191,255,0.5);
-			margin: 20px 0;
+			margin: 10px 0;
+			line-height: 1;
 		}
 
 		/* 画面切り替え用 */
 		.screen {
 			display: none;
+			height: 100%;
 		}
 		.screen.active {
-			display: block;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
 		}
 
 		/* 共通ボタン・フォームスタイル */
@@ -75,8 +84,8 @@
 		.btn-primary {
 			background-color: var(--accent-color);
 			color: #000;
-			padding: 12px 24px;
-			font-size: 1.1rem;
+			padding: 10px 20px;
+			font-size: 1rem;
 		}
 		.btn-primary:hover {
 			background-color: var(--accent-hover);
@@ -86,7 +95,8 @@
 		.btn-secondary {
 			background-color: #444;
 			color: #fff;
-			padding: 8px 16px;
+			padding: 6px 12px;
+			font-size: 0.9rem;
 		}
 		.btn-secondary:hover {
 			background-color: #555;
@@ -95,7 +105,8 @@
 		.btn-danger {
 			background-color: var(--danger-color);
 			color: #fff;
-			padding: 8px 16px;
+			padding: 4px 8px;
+			font-size: 0.85rem;
 		}
 		.btn-danger:hover {
 			background-color: var(--danger-hover);
@@ -106,24 +117,28 @@
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			margin-bottom: 20px;
+			margin-bottom: 12px;
+		}
+		.config-header h2 {
+			margin: 0;
+			font-size: 1.2rem;
 		}
 
 		.config-actions {
 			display: flex;
 			align-items: center;
-			gap: 15px;
+			gap: 10px;
 		}
 
 		/* サウンド切替スイッチ */
 		.sound-switch-container {
 			display: flex;
 			align-items: center;
-			gap: 8px;
-			font-size: 0.95rem;
+			gap: 6px;
+			font-size: 0.85rem;
 			font-weight: bold;
 			background-color: var(--card-bg);
-			padding: 8px 14px;
+			padding: 4px 10px;
 			border-radius: 20px;
 			border: 1px solid var(--border-color);
 			user-select: none;
@@ -132,8 +147,8 @@
 		.switch {
 			position: relative;
 			display: inline-block;
-			width: 44px;
-			height: 24px;
+			width: 36px;
+			height: 20px;
 		}
 
 		.switch input {
@@ -151,14 +166,14 @@
 			bottom: 0;
 			background-color: #555;
 			transition: .3s;
-			border-radius: 24px;
+			border-radius: 20px;
 		}
 
 		.slider:before {
 			position: absolute;
 			content: "";
-			height: 18px;
-			width: 18px;
+			height: 14px;
+			width: 14px;
 			left: 3px;
 			bottom: 3px;
 			background-color: white;
@@ -171,13 +186,13 @@
 		}
 
 		input:checked + .slider:before {
-			transform: translateX(20px);
+			transform: translateX(16px);
 		}
 
 		.table-responsive {
-			max-height: 350px;
+			max-height: 45dvh;
 			overflow-y: auto;
-			margin-bottom: 25px;
+			margin-bottom: 15px;
 			border: 1px solid var(--border-color);
 			border-radius: 4px;
 		}
@@ -190,7 +205,7 @@
 		}
 
 		th, td {
-			padding: 12px 8px;
+			padding: 8px 4px;
 			border-bottom: 1px solid var(--border-color);
 		}
 
@@ -200,17 +215,18 @@
 			position: sticky;
 			top: 0;
 			z-index: 10;
+			font-size: 0.85rem;
 		}
 
 		input[type="number"] {
-			width: 80px;
-			padding: 8px;
+			width: 65px;
+			padding: 4px;
 			background-color: #121212;
 			border: 1px solid var(--border-color);
 			color: var(--text-color);
 			text-align: center;
 			border-radius: 4px;
-			font-size: 1rem;
+			font-size: 0.9rem;
 		}
 		input[type="number"]:focus {
 			outline: none;
@@ -222,14 +238,14 @@
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			margin-bottom: 10px;
+			margin-bottom: 5px;
 		}
 
 		.level-badge {
-			font-size: 1.5rem;
+			font-size: 1.2rem;
 			color: var(--accent-color);
 			font-weight: bold;
-			letter-spacing: 2px;
+			letter-spacing: 1px;
 			user-select: none;
 			-webkit-user-select: none;
 			cursor: pointer;
@@ -244,41 +260,48 @@
 		.blinds-info {
 			display: grid;
 			grid-template-columns: repeat(3, 1fr);
-			gap: 15px;
+			gap: 8px;
 			background-color: var(--card-bg);
-			padding: 20px;
+			padding: 10px;
 			border-radius: 8px;
-			margin-bottom: 25px;
+			margin-bottom: 10px;
 			border: 1px solid var(--border-color);
 		}
 
 		.blind-item .label {
-			font-size: 0.9rem;
+			font-size: 0.75rem;
 			color: var(--text-muted);
-			margin-bottom: 5px;
+			margin-bottom: 2px;
 		}
 
 		.blind-item .value {
-			font-size: 1.8rem;
+			font-size: 1.2rem;
 			font-weight: bold;
 			color: var(--text-color);
 		}
 
 		/* 微調整ボタン群 */
+		.time-adjust-group {
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+			margin-bottom: 12px;
+		}
+
 		.time-adjust-controls {
 			display: flex;
 			justify-content: center;
-			gap: 10px;
-			margin-bottom: 25px;
-			flex-wrap: wrap;
+			gap: 6px;
 		}
 
 		.btn-adjust {
 			background-color: #2a2a2a;
 			color: var(--text-color);
 			border: 1px solid var(--border-color);
-			padding: 8px 14px;
-			font-size: 0.95rem;
+			padding: 6px 10px;
+			font-size: 0.8rem;
+			flex: 1;
+			max-width: 90px;
 		}
 		.btn-adjust:hover {
 			background-color: #3a3a3a;
@@ -289,15 +312,15 @@
 		.main-controls {
 			display: flex;
 			justify-content: center;
-			gap: 15px;
-			flex-wrap: wrap;
+			gap: 8px;
 			align-items: center;
 		}
 
 		.btn-control {
-			padding: 12px 30px;
-			font-size: 1.2rem;
+			padding: 10px 16px;
+			font-size: 1rem;
 			border-radius: 6px;
+			flex: 1;
 		}
 
 		.btn-start {
@@ -333,7 +356,7 @@
 			width: 100%;
 			background: linear-gradient(135deg, rgba(0, 191, 255, 0.95), rgba(0, 122, 204, 0.95));
 			color: #000;
-			padding: 20px;
+			padding: 12px;
 			box-sizing: border-box;
 			text-align: center;
 			font-weight: bold;
@@ -345,11 +368,11 @@
 			animation: slideDown 0.3s ease-out;
 		}
 		#notification-banner .banner-title {
-			font-size: 1.4rem;
-			margin-bottom: 5px;
+			font-size: 1.1rem;
+			margin-bottom: 2px;
 		}
 		#notification-banner .banner-sub {
-			font-size: 0.95rem;
+			font-size: 0.8rem;
 			opacity: 0.85;
 		}
 
@@ -357,48 +380,17 @@
 			from { transform: translateY(-100%); opacity: 0; }
 			to { transform: translateY(0); opacity: 1; }
 		}
-	
-		@media (max-width: 768px) {
+
+		@media (max-width: 480px) {
 			.clock-container {
-				width: 95%;
-				padding: 20px 15px;
+				width: 96%;
+				padding: 15px 10px;
 			}
-			.digital-clock {
-				letter-spacing: 4px;
-				margin: 15px 0;
-			}
-			.config-header {
-				flex-direction: column;
-				gap: 15px;
-				align-items: stretch;
-			}
-			.config-actions {
-				justify-content: space-between;
-			}
-			.blinds-info {
-				grid-template-columns: 1fr;
-				gap: 10px;
-				padding: 15px;
+			.config-header h2 {
+				font-size: 1rem;
 			}
 			.blind-item .value {
-				font-size: 1.5rem;
-			}
-			input[type="number"] {
-				width: 60px;
-				padding: 6px;
-				font-size: 0.9rem;
-			}
-			th, td {
-				padding: 8px 4px;
-				font-size: 0.9rem;
-			}
-			.btn-control, .btn-primary {
-				width: 100%;
-				box-sizing: border-box;
-			}
-			.main-controls, .time-adjust-controls {
-				flex-direction: column;
-				gap: 10px;
+				font-size: 1rem;
 			}
 		}
 	</style>
@@ -409,23 +401,23 @@
 		<!-- 通知バナー -->
 		<div id="notification-banner" onclick="closeBanner()">
 			<div class="banner-title" id="banner-title">🔔 レベルアップ！アンティが上がりました！</div>
-			<div class="banner-sub">クリックまたはタップして閉じる</div>
+			<div class="banner-sub">タップして閉じる</div>
 		</div>
 
 		<!-- 1. 準備画面 (CONFIG) -->
 		<div id="config-screen" class="screen active">
 			<div class="config-header">
-				<h2>ポーカー ブラインド設定</h2>
+				<h2>ブラインド設定</h2>
 				<div class="config-actions">
 					<!-- サウンドスイッチ -->
 					<div class="sound-switch-container">
-						<span>🔊 音</span>
+						<span>🔊</span>
 						<label class="switch">
 							<input type="checkbox" id="sound-toggle" checked onchange="toggleSoundSetting(this)">
 							<span class="slider"></span>
 						</label>
 					</div>
-					<button class="btn-primary" onclick="addLevelRow()">＋ レベル追加</button>
+					<button class="btn-primary" onclick="addLevelRow()">＋ 追加</button>
 				</div>
 			</div>
 			
@@ -434,9 +426,9 @@
 					<thead>
 						<tr>
 							<th>Lv</th>
-							<th>時間 (分)</th>
-							<th>BB (ビッグ)</th>
-							<th>SB (スモール)</th>
+							<th>時間(分)</th>
+							<th>BB</th>
+							<th>SB</th>
 							<th>アンティ</th>
 							<th>操作</th>
 						</tr>
@@ -447,27 +439,27 @@
 				</table>
 			</div>
 
-			<button class="btn-primary" style="width: 100%; padding: 15px; font-size: 1.2rem;" onclick="startTimerApp()">タイマーを開始する</button>
+			<button class="btn-primary" style="width: 100%; padding: 12px; font-size: 1.1rem;" onclick="startTimerApp()">タイマーを開始する</button>
 		</div>
 
 		<!-- 2. タイマー画面 -->
 		<div id="timer-screen" class="screen">
 			<div class="timer-header">
 				<div class="level-badge" id="display-level" onclick="handleSecretTap()">LEVEL 1</div>
-				<button class="btn-secondary" onclick="backToConfig()">設定に戻る</button>
+				<button class="btn-secondary" onclick="backToConfig()">設定へ</button>
 			</div>
 
 			<div class="blinds-info">
 				<div class="blind-item">
-					<div class="label"> スモール (SB)</div>
+					<div class="label">SB</div>
 					<div class="value" id="display-sb">0</div>
 				</div>
 				<div class="blind-item">
-					<div class="label">ビッグ (BB)</div>
+					<div class="label">BB</div>
 					<div class="value" id="display-bb">0</div>
 				</div>
 				<div class="blind-item">
-					<div class="label">アンティ (ANTE)</div>
+					<div class="label">ANTE</div>
 					<div class="value" id="display-ante">0</div>
 				</div>
 			</div>
@@ -476,22 +468,24 @@
 			<div class="digital-clock" id="timer-display">00:00</div>
 
 			<!-- 時間の微調整ボタン -->
-			<div class="time-adjust-controls">
-				<button class="btn-adjust" onclick="adjustTime(-30)">-30秒</button>
-				<button class="btn-adjust" onclick="adjustTime(-60)">-1分</button>
-				<button class="btn-adjust" onclick="adjustTime(-300)">-5分</button>
-			</div>
-			<div class="time-adjust-controls">
-				<button class="btn-adjust" onclick="adjustTime(30)">+30秒</button>
-				<button class="btn-adjust" onclick="adjustTime(60)">+1分</button>
-				<button class="btn-adjust" onclick="adjustTime(300)">+5分</button>
+			<div class="time-adjust-group">
+				<div class="time-adjust-controls">
+					<button class="btn-adjust" onclick="adjustTime(-30)">-30秒</button>
+					<button class="btn-adjust" onclick="adjustTime(-60)">-1分</button>
+					<button class="btn-adjust" onclick="adjustTime(-300)">-5分</button>
+				</div>
+				<div class="time-adjust-controls">
+					<button class="btn-adjust" onclick="adjustTime(30)">+30秒</button>
+					<button class="btn-adjust" onclick="adjustTime(60)">+1分</button>
+					<button class="btn-adjust" onclick="adjustTime(300)">+5分</button>
+				</div>
 			</div>
 
 			<!-- メインコントロールボタン -->
 			<div class="main-controls">
 				<button class="btn-control btn-reset" onclick="resetCurrentLevel()">リセット</button>
 				<button class="btn-control btn-start" id="toggle-btn" onclick="toggleTimer()">スタート</button>
-				<button class="btn-control btn-secondary" onclick="nextLevelManual()">次のレベルへ ⏩</button>
+				<button class="btn-control btn-secondary" onclick="nextLevelManual()">次へ ⏩</button>
 			</div>
 		</div>
 	</div>
@@ -564,7 +558,6 @@
 		const tdAction = document.createElement('td');
 		const deleteBtn = document.createElement('button');
 		deleteBtn.className = 'btn-danger';
-		deleteBtn.style.padding = '6px 10px';
 		deleteBtn.type = 'button';
 		deleteBtn.innerText = '削除';
 		deleteBtn.addEventListener('click', () => removeLevelRow(deleteBtn));
@@ -692,10 +685,10 @@
 				
 				currentLevelIndex++;
 				if (currentLevelIndex < levelsData.length) {
-					showBanner(`LEVEL ${currentLevelIndex + 1} へ移行します（アンティ・ブラインド更新）`);
+					showBanner(`LEVEL ${currentLevelIndex + 1} へ移行します`);
 					loadLevel(currentLevelIndex);
 				} else {
-					showBanner("ファイナルレベルが終了しました！お疲れ様でした！");
+					showBanner("全レベルが終了しました！");
 					document.getElementById('display-level').innerText = "FINISH";
 				}
 
