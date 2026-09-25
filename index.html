@@ -442,7 +442,7 @@
 	// 起動時にテーブル初期化
 	window.addEventListener('DOMContentLoaded', () => {
 		initialLevels.forEach(lvl => addLevelRow(lvl.time, lvl.bb, lvl.sb, lvl.ante));
-	};
+	});
 
 	function addLevelRow(time = 15, bb = 1000, sb = 500, ante = 500) {
 		const tbody = document.getElementById('table-body');
@@ -472,11 +472,11 @@
 				if (val < field.min) val = field.min;
 				if (field.max && val > field.max) val = field.max;
 				e.target.value = val;
-			};
+			});
 
 			td.appendChild(input);
 			tr.appendChild(td);
-		};
+		});
 
 		const tdAction = document.createElement('td');
 		const deleteBtn = document.createElement('button');
@@ -506,7 +506,7 @@
 		const rows = document.querySelectorAll('#table-body tr');
 		rows.forEach((row, idx) => {
 			row.querySelector('.lv-num').innerText = idx + 1;
-		};
+		});
 	}
 
 	function collectTableData() {
@@ -517,8 +517,8 @@
 			const bb = Math.max(0, parseInt(row.querySelector('.input-bb').value) || 0);
 			const sb = Math.max(0, parseInt(row.querySelector('.input-sb').value) || 0);
 			const ante = Math.max(0, parseInt(row.querySelector('.input-ante').value) || 0);
-			data.push{ time, bb, sb, ante };
-		};
+			data.push({ time, bb, sb, ante });
+		});
 		return data;
 	}
 
