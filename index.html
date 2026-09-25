@@ -50,7 +50,7 @@
 			font-weight: 900;
 			letter-spacing: 10px;
 			font-variant-numeric: tabular-nums;
-			color: #00bfff;
+			color: var(--accent-color);
 			text-shadow: 0 0 15px rgba(0,191,255,0.5);
 			margin: 20px 0;
 		}
@@ -165,6 +165,15 @@
 			color: var(--accent-color);
 			font-weight: bold;
 			letter-spacing: 2px;
+			user-select: none;
+			-webkit-user-select: none;
+			cursor: pointer;
+			transition: color 0.3s;
+		}
+
+		.level-badge.secret-active {
+			color: #483d8b;
+			text-shadow: 0 0 10px rgba(72,61,139,0.4);
 		}
 
 		.blinds-info {
@@ -283,50 +292,42 @@
 			from { transform: translateY(-100%); opacity: 0; }
 			to { transform: translateY(0); opacity: 1; }
 		}
-
+	
 		@media (max-width: 768px) {
 			.clock-container {
 				width: 95%;
-				padding: 20px 15px; 
+				padding: 20px 15px;
 			}
-
 			.digital-clock {
 				letter-spacing: 4px;
 				margin: 15px 0;
 			}
-
 			.config-header {
 				flex-direction: column;
 				gap: 15px;
 				align-items: stretch;
 			}
-
 			.blinds-info {
-				grid-template-columns: 1fr; 
+				grid-template-columns: 1fr;
 				gap: 10px;
 				padding: 15px;
 			}
-
 			.blind-item .value {
 				font-size: 1.5rem;
 			}
-
 			input[type="number"] {
 				width: 60px;
 				padding: 6px;
 				font-size: 0.9rem;
 			}
-
 			th, td {
 				padding: 8px 4px;
 				font-size: 0.9rem;
 			}
-
 			.btn-control, .btn-primary {
-				width: 100%; 
+				width: 100%;
 				box-sizing: border-box;
 			}
-
 			.main-controls, .time-adjust-controls {
 				flex-direction: column;
 				gap: 10px;
@@ -374,13 +375,13 @@
 		<!-- 2. タイマー画面 -->
 		<div id="timer-screen" class="screen">
 			<div class="timer-header">
-				<div class="level-badge" id="display-level">LEVEL 1</div>
+				<div class="level-badge" id="display-level" onclick="handleSecretTap()">LEVEL 1</div>
 				<button class="btn-secondary" onclick="backToConfig()">設定に戻る</button>
 			</div>
 
 			<div class="blinds-info">
 				<div class="blind-item">
-					<div class="label">スモール (SB)</div>
+					<div class="label"> スモール (SB)</div>
 					<div class="value" id="display-sb">0</div>
 				</div>
 				<div class="blind-item">
@@ -434,21 +435,23 @@
 	let isRunning = false;
 	let audioCtx = null;
 
+	let secretTapCount = 0;
+	let isSecretSpeedActive = false;
+	let secretTapTimer = null;
+
 	// 起動時にテーブル初期化
 	window.addEventListener('DOMContentLoaded', () => {
 		initialLevels.forEach(lvl => addLevelRow(lvl.time, lvl.bb, lvl.sb, lvl.ante));
-	});
+	};
 
 	function addLevelRow(time = 15, bb = 1000, sb = 500, ante = 500) {
 		const tbody = document.getElementById('table-body');
 		const tr = document.createElement('tr');
 
-		// Lv表示用セル
 		const tdNum = document.createElement('td');
 		tdNum.className = 'lv-num';
 		tr.appendChild(tdNum);
 
-		// 各入力項目の定義
 		const fields = [
 			{ className: 'input-time', value: time, min: 1, max: 999 },
 			{ className: 'input-bb', value: bb, min: 0},
@@ -461,24 +464,20 @@
 			const input = document.createElement('input');
 			input.type = 'number';
 			input.className = field.className;
-			
-			// 確実に数値に変換し、最小値を下回らないようにガード
 			input.value = Math.max(field.min, Number(field.value) || 0);
 			input.min = field.min;
 
-			// リアルタイムでのマイナス値防止
 			input.addEventListener('input', (e) => {
 				let val = Number(e.target.value);
 				if (val < field.min) val = field.min;
 				if (field.max && val > field.max) val = field.max;
 				e.target.value = val;
-			});
+			};
 
 			td.appendChild(input);
 			tr.appendChild(td);
-		});
+		};
 
-		// 削除ボタン用セル
 		const tdAction = document.createElement('td');
 		const deleteBtn = document.createElement('button');
 		deleteBtn.className = 'btn-danger';
@@ -507,7 +506,7 @@
 		const rows = document.querySelectorAll('#table-body tr');
 		rows.forEach((row, idx) => {
 			row.querySelector('.lv-num').innerText = idx + 1;
-		});
+		};
 	}
 
 	function collectTableData() {
@@ -518,12 +517,11 @@
 			const bb = Math.max(0, parseInt(row.querySelector('.input-bb').value) || 0);
 			const sb = Math.max(0, parseInt(row.querySelector('.input-sb').value) || 0);
 			const ante = Math.max(0, parseInt(row.querySelector('.input-ante').value) || 0);
-			data.push({ time, bb, sb, ante });
-		});
+			data.push{ time, bb, sb, ante };
+		};
 		return data;
 	}
 
-	// タイマー画面へ遷移・初期化
 	function startTimerApp() {
 		levelsData = collectTableData();
 		if (levelsData.length === 0) {
@@ -542,6 +540,9 @@
 		document.getElementById('timer-screen').classList.remove('active');
 		document.getElementById('config-screen').classList.add('active');
 		closeBanner();
+		isSecretSpeedActive = false;
+		secretTapCount = 0;
+		document.getElementById('display-level').classList.remove('secret-active');
 	}
 
 	function loadLevel(index) {
@@ -552,6 +553,14 @@
 		}
 		const lvl = levelsData[index];
 		document.getElementById('display-level').innerText = `LEVEL ${index + 1}`;
+		
+		// レベル変更時もシークレット状態の見た目を維持
+		if (isSecretSpeedActive) {
+			document.getElementById('display-level').classList.add('secret-active');
+		} else {
+			document.getElementById('display-level').classList.remove('secret-active');
+		}
+
 		document.getElementById('display-sb').innerText = lvl.sb.toLocaleString();
 		document.getElementById('display-bb').innerText = lvl.bb.toLocaleString();
 		document.getElementById('display-ante').innerText = lvl.ante.toLocaleString();
@@ -577,12 +586,13 @@
 
 	function startTimer() {
 		if (isRunning) return;
-		initAudio();
 		isRunning = true;
 		const btn = document.getElementById('toggle-btn');
 		btn.innerText = "一時停止";
 		btn.classList.remove('btn-start');
 		btn.classList.add('btn-pause');
+
+		const intervalTime = isSecretSpeedActive ? 800 : 1000;
 
 		timerInterval = setInterval(() => {
 			if (remainingSeconds > 0) {
@@ -593,7 +603,6 @@
 			if (remainingSeconds <= 0) {
 				clearInterval(timerInterval);
 				isRunning = false;
-				playAlarmSound();
 				
 				currentLevelIndex++;
 				if (currentLevelIndex < levelsData.length) {
@@ -609,7 +618,7 @@
 				btn.classList.remove('btn-pause');
 				btn.classList.add('btn-start');
 			}
-		}, 1000);
+		}, intervalTime);
 	}
 
 	function pauseTimer() {
@@ -648,37 +657,6 @@
 		loadLevel(currentLevelIndex);
 	}
 
-	function initAudio() {
-		if (!audioCtx) {
-			audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-		}
-		if (audioCtx.state === 'suspended') {
-			audioCtx.resume();
-		}
-	}
-
-	function playAlarmSound() {
-		try {
-			initAudio();
-			const osc = audioCtx.createOscillator();
-			const gain = audioCtx.createGain();
-			osc.type = 'sine';
-			osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-			osc.frequency.setValueAtTime(440, audioCtx.currentTime + 0.2);
-			
-			gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-			gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
-
-			osc.connect(gain);
-			gain.connect(audioCtx.destination);
-
-			osc.start();
-			osc.stop(audioCtx.currentTime + 0.6);
-		} catch (e) {
-			console.log("Audio not supported or blocked", e);
-		}
-	}
-
 	function showBanner(message) {
 		const banner = document.getElementById('notification-banner');
 		const titleElem = document.getElementById('banner-title');
@@ -689,6 +667,32 @@
 	function closeBanner() {
 		const banner = document.getElementById('notification-banner');
 		banner.style.display = 'none';
+	}
+
+	function handleSecretTap() {
+		secretTapCount++;
+		
+		clearTimeout(secretTapTimer);
+		secretTapTimer = setTimeout(() => {
+			secretTapCount = 0;
+		}, 1500);
+
+		if (secretTapCount >= 5) {
+			isSecretSpeedActive = !isSecretSpeedActive;
+			secretTapCount = 0;
+			
+			const levelBadge = document.getElementById('display-level');
+			if (isSecretSpeedActive) {
+				levelBadge.classList.add('secret-active');
+			} else {
+				levelBadge.classList.remove('secret-active');
+			}
+			
+			if (isRunning) {
+				pauseTimer();
+				startTimer();
+			}
+		}
 	}
 </script>
 </body>
