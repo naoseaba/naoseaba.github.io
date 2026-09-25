@@ -21,58 +21,53 @@
 			--warning-hover: #e0a800;
 		}
 
+		/* --- PC表示（デフォルト） --- */
 		body {
 			font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 			background-color: var(--bg-color);
 			color: var(--text-color);
 			margin: 0;
-			height: 100dvh; /* スマホのアドレスバー等を考慮した高さ */
+			min-height: 100vh;
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			overflow: hidden; /* 全体スクロールを防止 */
+			padding: 20px 0;
+			box-sizing: border-box;
 		}
 
 		.clock-container {
-			width: 92%;
-			max-width: 900px;
-			max-height: 96dvh;
-			padding: 24px 20px;
+			width: 90%;
+			max-width: 850px;
+			padding: 30px;
 			background-color: var(--container-bg);
-			border-radius: 0.5rem;
-			box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.5);
+			border-radius: 0.75rem;
+			box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.6);
 			text-align: center;
 			box-sizing: border-box;
 			position: relative;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
 		}
 
 		.digital-clock {
-			font-size: clamp(3.5rem, 15vw, 9rem);
+			font-size: 8rem;
 			font-family: "Nunito", sans-serif;
 			font-weight: 900;
 			letter-spacing: 6px;
 			font-variant-numeric: tabular-nums;
 			color: var(--accent-color);
-			text-shadow: 0 0 15px rgba(0,191,255,0.5);
-			margin: 10px 0;
+			text-shadow: 0 0 20px rgba(0,191,255,0.5);
+			margin: 15px 0;
 			line-height: 1;
 		}
 
-		/* 画面切り替え用 */
+		/* 画面切り替え */
 		.screen {
 			display: none;
-			height: 100%;
 		}
 		.screen.active {
-			display: flex;
-			flex-direction: column;
-			justify-content: space-between;
+			display: block;
 		}
 
-		/* 共通ボタン・フォームスタイル */
+		/* ボタン・共通パーツ */
 		button {
 			cursor: pointer;
 			font-weight: bold;
@@ -95,8 +90,8 @@
 		.btn-secondary {
 			background-color: #444;
 			color: #fff;
-			padding: 6px 12px;
-			font-size: 0.9rem;
+			padding: 8px 16px;
+			font-size: 0.95rem;
 		}
 		.btn-secondary:hover {
 			background-color: #555;
@@ -112,22 +107,22 @@
 			background-color: var(--danger-hover);
 		}
 
-		/* 準備画面（テーブル設定） */
+		/* 設定画面 */
 		.config-header {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			margin-bottom: 12px;
+			margin-bottom: 15px;
 		}
 		.config-header h2 {
 			margin: 0;
-			font-size: 1.2rem;
+			font-size: 1.4rem;
 		}
 
 		.config-actions {
 			display: flex;
 			align-items: center;
-			gap: 10px;
+			gap: 12px;
 		}
 
 		/* サウンド切替スイッチ */
@@ -135,10 +130,10 @@
 			display: flex;
 			align-items: center;
 			gap: 6px;
-			font-size: 0.85rem;
+			font-size: 0.9rem;
 			font-weight: bold;
 			background-color: var(--card-bg);
-			padding: 4px 10px;
+			padding: 6px 12px;
 			border-radius: 20px;
 			border: 1px solid var(--border-color);
 			user-select: none;
@@ -147,7 +142,7 @@
 		.switch {
 			position: relative;
 			display: inline-block;
-			width: 36px;
+			width: 38px;
 			height: 20px;
 		}
 
@@ -186,13 +181,13 @@
 		}
 
 		input:checked + .slider:before {
-			transform: translateX(16px);
+			transform: translateX(18px);
 		}
 
 		.table-responsive {
-			max-height: 45dvh;
+			max-height: 400px;
 			overflow-y: auto;
-			margin-bottom: 15px;
+			margin-bottom: 20px;
 			border: 1px solid var(--border-color);
 			border-radius: 4px;
 		}
@@ -205,7 +200,7 @@
 		}
 
 		th, td {
-			padding: 8px 4px;
+			padding: 10px 8px;
 			border-bottom: 1px solid var(--border-color);
 		}
 
@@ -215,34 +210,33 @@
 			position: sticky;
 			top: 0;
 			z-index: 10;
-			font-size: 0.85rem;
 		}
 
 		input[type="number"] {
-			width: 65px;
-			padding: 4px;
+			width: 70px;
+			padding: 6px;
 			background-color: #121212;
 			border: 1px solid var(--border-color);
 			color: var(--text-color);
 			text-align: center;
 			border-radius: 4px;
-			font-size: 0.9rem;
+			font-size: 0.95rem;
 		}
 		input[type="number"]:focus {
 			outline: none;
 			border-color: var(--accent-color);
 		}
 
-		/* タイマー画面レイアウト */
+		/* タイマー画面 */
 		.timer-header {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			margin-bottom: 5px;
+			margin-bottom: 10px;
 		}
 
 		.level-badge {
-			font-size: 1.2rem;
+			font-size: 1.5rem;
 			color: var(--accent-color);
 			font-weight: bold;
 			letter-spacing: 1px;
@@ -260,22 +254,22 @@
 		.blinds-info {
 			display: grid;
 			grid-template-columns: repeat(3, 1fr);
-			gap: 8px;
+			gap: 12px;
 			background-color: var(--card-bg);
-			padding: 10px;
+			padding: 15px;
 			border-radius: 8px;
-			margin-bottom: 10px;
+			margin-bottom: 15px;
 			border: 1px solid var(--border-color);
 		}
 
 		.blind-item .label {
-			font-size: 0.75rem;
+			font-size: 0.85rem;
 			color: var(--text-muted);
-			margin-bottom: 2px;
+			margin-bottom: 4px;
 		}
 
 		.blind-item .value {
-			font-size: 1.2rem;
+			font-size: 1.5rem;
 			font-weight: bold;
 			color: var(--text-color);
 		}
@@ -284,41 +278,41 @@
 		.time-adjust-group {
 			display: flex;
 			flex-direction: column;
-			gap: 6px;
-			margin-bottom: 12px;
+			gap: 8px;
+			margin-bottom: 20px;
 		}
 
 		.time-adjust-controls {
 			display: flex;
 			justify-content: center;
-			gap: 6px;
+			gap: 8px;
 		}
 
 		.btn-adjust {
 			background-color: #2a2a2a;
 			color: var(--text-color);
 			border: 1px solid var(--border-color);
-			padding: 6px 10px;
-			font-size: 0.8rem;
+			padding: 8px 12px;
+			font-size: 0.85rem;
 			flex: 1;
-			max-width: 90px;
+			max-width: 110px;
 		}
 		.btn-adjust:hover {
 			background-color: #3a3a3a;
 			border-color: var(--accent-color);
 		}
 
-		/* メインコントロールボタン群 */
+		/* コントロールボタン群 */
 		.main-controls {
 			display: flex;
 			justify-content: center;
-			gap: 8px;
+			gap: 12px;
 			align-items: center;
 		}
 
 		.btn-control {
-			padding: 10px 16px;
-			font-size: 1rem;
+			padding: 12px 24px;
+			font-size: 1.1rem;
 			border-radius: 6px;
 			flex: 1;
 		}
@@ -347,7 +341,7 @@
 			background-color: #666;
 		}
 
-		/* 通知バナーオーバーレイ */
+		/* 通知バナー */
 		#notification-banner {
 			display: none;
 			position: absolute;
@@ -362,18 +356,10 @@
 			font-weight: bold;
 			box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 			z-index: 100;
-			border-top-left-radius: 0.5rem;
-			border-top-right-radius: 0.5rem;
+			border-top-left-radius: 0.75rem;
+			border-top-right-radius: 0.75rem;
 			cursor: pointer;
 			animation: slideDown 0.3s ease-out;
-		}
-		#notification-banner .banner-title {
-			font-size: 1.1rem;
-			margin-bottom: 2px;
-		}
-		#notification-banner .banner-sub {
-			font-size: 0.8rem;
-			opacity: 0.85;
 		}
 
 		@keyframes slideDown {
@@ -381,16 +367,95 @@
 			to { transform: translateY(0); opacity: 1; }
 		}
 
+
+		/* --- スマホ表示時の設定 (幅480px以下) --- */
 		@media (max-width: 480px) {
+			body {
+				height: 100dvh;
+				min-height: auto;
+				padding: 0;
+				overflow: hidden; /* スマホのみ全体スクロールを防止 */
+			}
+
 			.clock-container {
 				width: 96%;
-				padding: 15px 10px;
+				max-height: 96dvh;
+				padding: 15px 12px;
+				border-radius: 0.5rem;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
 			}
+
+			.screen.active {
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+				height: 100%;
+			}
+
+			.digital-clock {
+				font-size: clamp(3.5rem, 16vw, 5.5rem);
+				margin: 6px 0;
+			}
+
 			.config-header h2 {
-				font-size: 1rem;
+				font-size: 1.1rem;
 			}
+
+			.table-responsive {
+				max-height: 40dvh;
+				margin-bottom: 10px;
+			}
+
+			th, td {
+				padding: 6px 2px;
+				font-size: 0.85rem;
+			}
+
+			input[type="number"] {
+				width: 55px;
+				padding: 4px;
+				font-size: 0.85rem;
+			}
+
+			.level-badge {
+				font-size: 1.1rem;
+			}
+
+			.blinds-info {
+				padding: 8px;
+				gap: 4px;
+				margin-bottom: 8px;
+			}
+
+			.blind-item .label {
+				font-size: 0.7rem;
+				margin-bottom: 2px;
+			}
+
 			.blind-item .value {
-				font-size: 1rem;
+				font-size: 1.1rem;
+			}
+
+			.time-adjust-group {
+				gap: 4px;
+				margin-bottom: 10px;
+			}
+
+			.btn-adjust {
+				padding: 6px 4px;
+				font-size: 0.75rem;
+			}
+
+			.btn-control {
+				padding: 10px 8px;
+				font-size: 0.95rem;
+			}
+
+			#notification-banner {
+				border-top-left-radius: 0.5rem;
+				border-top-right-radius: 0.5rem;
 			}
 		}
 	</style>
@@ -400,8 +465,8 @@
 	<div class="clock-container">
 		<!-- 通知バナー -->
 		<div id="notification-banner" onclick="closeBanner()">
-			<div class="banner-title" id="banner-title">🔔 レベルアップ！アンティが上がりました！</div>
-			<div class="banner-sub">タップして閉じる</div>
+			<div class="banner-title" id="banner-title">🔔 レベルアップ！</div>
+			<div style="font-size: 0.8rem; opacity: 0.85;">タップして閉じる</div>
 		</div>
 
 		<!-- 1. 準備画面 (CONFIG) -->
@@ -409,7 +474,6 @@
 			<div class="config-header">
 				<h2>ブラインド設定</h2>
 				<div class="config-actions">
-					<!-- サウンドスイッチ -->
 					<div class="sound-switch-container">
 						<span>🔊</span>
 						<label class="switch">
@@ -467,7 +531,7 @@
 			<!-- デジタル時計 -->
 			<div class="digital-clock" id="timer-display">00:00</div>
 
-			<!-- 時間の微調整ボタン -->
+			<!-- 微調整ボタン -->
 			<div class="time-adjust-group">
 				<div class="time-adjust-controls">
 					<button class="btn-adjust" onclick="adjustTime(-30)">-30秒</button>
@@ -491,7 +555,6 @@
 	</div>
 
 <script>
-	// サンプル初期データ
 	const initialLevels = [
 		{ time: 15, sb: 100, bb: 200, ante: 200 },
 		{ time: 15, sb: 200, bb: 400, ante: 400 },
@@ -512,7 +575,6 @@
 	let isSecretSpeedActive = false;
 	let secretTapTimer = null;
 
-	// 起動時にテーブル初期化
 	window.addEventListener('DOMContentLoaded', () => {
 		initialLevels.forEach(lvl => addLevelRow(lvl.time, lvl.bb, lvl.sb, lvl.ante));
 	});
