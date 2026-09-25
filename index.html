@@ -21,7 +21,6 @@
 			--warning-hover: #e0a800;
 		}
 
-		/* --- PC表示（デフォルト） --- */
 		body {
 			font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 			background-color: var(--bg-color);
@@ -47,6 +46,7 @@
 			position: relative;
 		}
 
+		/* デジタル時計表示 */
 		.digital-clock {
 			font-size: 8rem;
 			font-family: "Nunito", sans-serif;
@@ -59,7 +59,6 @@
 			line-height: 1;
 		}
 
-		/* 画面切り替え */
 		.screen {
 			display: none;
 		}
@@ -67,7 +66,7 @@
 			display: block;
 		}
 
-		/* ボタン・共通パーツ */
+		/* ボタン基本スタイル */
 		button {
 			cursor: pointer;
 			font-weight: bold;
@@ -107,7 +106,7 @@
 			background-color: var(--danger-hover);
 		}
 
-		/* 設定画面 */
+		/* 設定画面スタイル */
 		.config-header {
 			display: flex;
 			justify-content: space-between;
@@ -125,7 +124,7 @@
 			gap: 12px;
 		}
 
-		/* サウンド切替スイッチ */
+		/* 音声トグルスイッチ */
 		.sound-switch-container {
 			display: flex;
 			align-items: center;
@@ -227,7 +226,7 @@
 			border-color: var(--accent-color);
 		}
 
-		/* タイマー画面 */
+		/* タイマー画面スタイル */
 		.timer-header {
 			display: flex;
 			justify-content: space-between;
@@ -246,6 +245,7 @@
 			transition: color 0.3s;
 		}
 
+		/* 隠し機能発動時のレベル表示スタイル */
 		.level-badge.secret-active {
 			color: #483d8b;
 			text-shadow: 0 0 10px rgba(72,61,139,0.4);
@@ -274,7 +274,6 @@
 			color: var(--text-color);
 		}
 
-		/* 微調整ボタン群 */
 		.time-adjust-group {
 			display: flex;
 			flex-direction: column;
@@ -302,7 +301,6 @@
 			border-color: var(--accent-color);
 		}
 
-		/* コントロールボタン群 */
 		.main-controls {
 			display: flex;
 			justify-content: center;
@@ -341,7 +339,7 @@
 			background-color: #666;
 		}
 
-		/* 通知バナー */
+		/* 通知用バナー */
 		#notification-banner {
 			display: none;
 			position: absolute;
@@ -367,24 +365,25 @@
 			to { transform: translateY(0); opacity: 1; }
 		}
 
-
-		/* --- スマホ表示時の設定 (幅480px以下) --- */
+		/* レスポンシブ対応（スマホ向けレイアウト調整） */
 		@media (max-width: 480px) {
 			body {
 				height: 100dvh;
 				min-height: auto;
 				padding: 0;
-				overflow: hidden; /* スマホのみ全体スクロールを防止 */
+				overflow: hidden;
 			}
 
 			.clock-container {
-				width: 96%;
-				max-height: 96dvh;
-				padding: 15px 12px;
-				border-radius: 0.5rem;
+				width: 100%;
+				height: 100dvh;
+				max-height: 100dvh;
+				padding: 8px 12px;
+				border-radius: 0;
 				display: flex;
 				flex-direction: column;
-				justify-content: center;
+				justify-content: space-between;
+				box-sizing: border-box;
 			}
 
 			.screen.active {
@@ -394,9 +393,56 @@
 				height: 100%;
 			}
 
+			.timer-header {
+				margin-bottom: 2px;
+			}
+
+			.level-badge {
+				font-size: 1.2rem;
+			}
+
+			.blinds-info {
+				padding: 10px 6px;
+				gap: 4px;
+				margin-bottom: 2px;
+			}
+
+			.blind-item .label {
+				font-size: 0.75rem;
+				margin-bottom: 2px;
+			}
+
+			.blind-item .value {
+				font-size: 1.4rem;
+			}
+
 			.digital-clock {
-				font-size: clamp(3.5rem, 16vw, 5.5rem);
-				margin: 6px 0;
+				font-size: clamp(5.5rem, 28vw, 10rem);
+				margin: 0;
+				line-height: 0.9;
+				flex: 1;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+
+			.time-adjust-group {
+				gap: 3px;
+				margin-bottom: 6px;
+			}
+
+			.time-adjust-controls {
+				gap: 4px;
+			}
+
+			.btn-adjust {
+				padding: 5px 0;
+				font-size: 0.75rem;
+			}
+
+			.btn-control {
+				padding: 12px 4px;
+				font-size: 1rem;
 			}
 
 			.config-header h2 {
@@ -419,43 +465,9 @@
 				font-size: 0.85rem;
 			}
 
-			.level-badge {
-				font-size: 1.1rem;
-			}
-
-			.blinds-info {
-				padding: 8px;
-				gap: 4px;
-				margin-bottom: 8px;
-			}
-
-			.blind-item .label {
-				font-size: 0.7rem;
-				margin-bottom: 2px;
-			}
-
-			.blind-item .value {
-				font-size: 1.1rem;
-			}
-
-			.time-adjust-group {
-				gap: 4px;
-				margin-bottom: 10px;
-			}
-
-			.btn-adjust {
-				padding: 6px 4px;
-				font-size: 0.75rem;
-			}
-
-			.btn-control {
-				padding: 10px 8px;
-				font-size: 0.95rem;
-			}
-
 			#notification-banner {
-				border-top-left-radius: 0.5rem;
-				border-top-right-radius: 0.5rem;
+				border-top-left-radius: 0;
+				border-top-right-radius: 0;
 			}
 		}
 	</style>
@@ -469,11 +481,12 @@
 			<div style="font-size: 0.8rem; opacity: 0.85;">タップして閉じる</div>
 		</div>
 
-		<!-- 1. 準備画面 (CONFIG) -->
+		<!-- 画面1: ブラインド設定画面 -->
 		<div id="config-screen" class="screen active">
 			<div class="config-header">
 				<h2>ブラインド設定</h2>
 				<div class="config-actions">
+					<!-- サウンドON/OFF切替 -->
 					<div class="sound-switch-container">
 						<span>🔊</span>
 						<label class="switch">
@@ -498,7 +511,7 @@
 						</tr>
 					</thead>
 					<tbody id="table-body">
-						<!-- 初期データ -->
+						<!-- JavaScriptで動的に生成 -->
 					</tbody>
 				</table>
 			</div>
@@ -506,13 +519,14 @@
 			<button class="btn-primary" style="width: 100%; padding: 12px; font-size: 1.1rem;" onclick="startTimerApp()">タイマーを開始する</button>
 		</div>
 
-		<!-- 2. タイマー画面 -->
+		<!-- 画面2: タイマー画面 -->
 		<div id="timer-screen" class="screen">
 			<div class="timer-header">
 				<div class="level-badge" id="display-level" onclick="handleSecretTap()">LEVEL 1</div>
 				<button class="btn-secondary" onclick="backToConfig()">設定へ</button>
 			</div>
 
+			<!-- ブラインド情報表示エリア -->
 			<div class="blinds-info">
 				<div class="blind-item">
 					<div class="label">SB</div>
@@ -528,10 +542,10 @@
 				</div>
 			</div>
 
-			<!-- デジタル時計 -->
+			<!-- メインタイマー表示 -->
 			<div class="digital-clock" id="timer-display">00:00</div>
 
-			<!-- 微調整ボタン -->
+			<!-- 時間微調整ボタンエリア -->
 			<div class="time-adjust-group">
 				<div class="time-adjust-controls">
 					<button class="btn-adjust" onclick="adjustTime(-30)">-30秒</button>
@@ -545,7 +559,7 @@
 				</div>
 			</div>
 
-			<!-- メインコントロールボタン -->
+			<!-- メイン操作ボタン -->
 			<div class="main-controls">
 				<button class="btn-control btn-reset" onclick="resetCurrentLevel()">リセット</button>
 				<button class="btn-control btn-start" id="toggle-btn" onclick="toggleTimer()">スタート</button>
@@ -555,6 +569,7 @@
 	</div>
 
 <script>
+	// 初期レベルデータ（規定値）
 	const initialLevels = [
 		{ time: 15, sb: 100, bb: 200, ante: 200 },
 		{ time: 15, sb: 200, bb: 400, ante: 400 },
@@ -571,26 +586,32 @@
 	let audioCtx = null;
 	let isSoundEnabled = true;
 
+	// 隠し機能用変数
 	let secretTapCount = 0;
 	let isSecretSpeedActive = false;
 	let secretTapTimer = null;
 
+	// 初期表示時に初期データから行を作成
 	window.addEventListener('DOMContentLoaded', () => {
 		initialLevels.forEach(lvl => addLevelRow(lvl.time, lvl.bb, lvl.sb, lvl.ante));
 	});
 
+	// サウンドトグル切替
 	function toggleSoundSetting(checkbox) {
 		isSoundEnabled = checkbox.checked;
 	}
 
+	// 設定テーブルに新しい行を追加
 	function addLevelRow(time = 15, bb = 1000, sb = 500, ante = 500) {
 		const tbody = document.getElementById('table-body');
 		const tr = document.createElement('tr');
 
+		// Lv番号
 		const tdNum = document.createElement('td');
 		tdNum.className = 'lv-num';
 		tr.appendChild(tdNum);
 
+		// 各入力項目定義
 		const fields = [
 			{ className: 'input-time', value: time, min: 1, max: 999 },
 			{ className: 'input-bb', value: bb, min: 0},
@@ -606,6 +627,7 @@
 			input.value = Math.max(field.min, Number(field.value) || 0);
 			input.min = field.min;
 
+			// 入力時リアルタイムバリデーション（最小値未満やNaNを防ぐ）
 			input.addEventListener('input', (e) => {
 				let val = Number(e.target.value);
 				if (val < field.min) val = field.min;
@@ -617,6 +639,7 @@
 			tr.appendChild(td);
 		});
 
+		// 削除ボタン
 		const tdAction = document.createElement('td');
 		const deleteBtn = document.createElement('button');
 		deleteBtn.className = 'btn-danger';
@@ -630,6 +653,7 @@
 		updateLevelNumbers();
 	}
 
+	// 指定した行を削除
 	function removeLevelRow(btn) {
 		const tbody = document.getElementById('table-body');
 		if (tbody.rows.length <= 1) {
@@ -640,6 +664,7 @@
 		updateLevelNumbers();
 	}
 
+	// レベル番号の再振り分け
 	function updateLevelNumbers() {
 		const rows = document.querySelectorAll('#table-body tr');
 		rows.forEach((row, idx) => {
@@ -647,6 +672,7 @@
 		});
 	}
 
+	// テーブルから最新の設定データを配列として読み出し（安全値処理付き）
 	function collectTableData() {
 		const rows = document.querySelectorAll('#table-body tr');
 		const data = [];
@@ -660,6 +686,7 @@
 		return data;
 	}
 
+	// 設定からタイマー画面へ移動
 	function startTimerApp() {
 		levelsData = collectTableData();
 		if (levelsData.length === 0) {
@@ -673,16 +700,19 @@
 		document.getElementById('timer-screen').classList.add('active');
 	}
 
+	// タイマー画面から設定画面へ戻る
 	function backToConfig() {
 		pauseTimer();
 		document.getElementById('timer-screen').classList.remove('active');
 		document.getElementById('config-screen').classList.add('active');
 		closeBanner();
+		// 隠し機能解除
 		isSecretSpeedActive = false;
 		secretTapCount = 0;
 		document.getElementById('display-level').classList.remove('secret-active');
 	}
 
+	// 指定レベルのデータを画面にセット
 	function loadLevel(index) {
 		if (index >= levelsData.length) {
 			alert("すべてのレベルが終了しました！");
@@ -692,6 +722,7 @@
 		const lvl = levelsData[index];
 		document.getElementById('display-level').innerText = `LEVEL ${index + 1}`;
 		
+		// 隠し状態に応じた文字色クラス
 		if (isSecretSpeedActive) {
 			document.getElementById('display-level').classList.add('secret-active');
 		} else {
@@ -706,6 +737,7 @@
 		updateDisplay();
 	}
 
+	// 時間表示の更新
 	function updateDisplay() {
 		const mins = Math.floor(remainingSeconds / 60);
 		const secs = remainingSeconds % 60;
@@ -713,6 +745,7 @@
 			`${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 	}
 
+	// タイマーのスタート/一時停止切替
 	function toggleTimer() {
 		if (isRunning) {
 			pauseTimer();
@@ -721,6 +754,7 @@
 		}
 	}
 
+	// タイマー開始
 	function startTimer() {
 		if (isRunning) return;
 		if (isSoundEnabled) {
@@ -732,6 +766,7 @@
 		btn.classList.remove('btn-start');
 		btn.classList.add('btn-pause');
 
+		// 隠し機能発動時は1秒を800msに短縮（1.25倍速）
 		const intervalTime = isSecretSpeedActive ? 800 : 1000;
 
 		timerInterval = setInterval(() => {
@@ -745,6 +780,7 @@
 				isRunning = false;
 				playAlarmSound();
 				
+				// 次のレベルへ自動移行
 				currentLevelIndex++;
 				if (currentLevelIndex < levelsData.length) {
 					showBanner(`LEVEL ${currentLevelIndex + 1} へ移行します`);
@@ -762,6 +798,7 @@
 		}, intervalTime);
 	}
 
+	// タイマー停止
 	function pauseTimer() {
 		if (!isRunning) return;
 		clearInterval(timerInterval);
@@ -772,6 +809,7 @@
 		btn.classList.add('btn-start');
 	}
 
+	// 現在のレベルの時間をリセット
 	function resetCurrentLevel() {
 		pauseTimer();
 		closeBanner();
@@ -782,11 +820,13 @@
 		}
 	}
 
+	// 時間の微調整 (+/- 秒)
 	function adjustTime(sec) {
 		remainingSeconds = Math.max(0, Number(remainingSeconds) + Number(sec));
 		updateDisplay();
 	}
 
+	// 手動で次のレベルへ
 	function nextLevelManual() {
 		pauseTimer();
 		closeBanner();
@@ -798,6 +838,7 @@
 		loadLevel(currentLevelIndex);
 	}
 
+	// AudioContextの初期化（ユーザー操作が必要）
 	function initAudio() {
 		if (!audioCtx) {
 			audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -807,6 +848,7 @@
 		}
 	}
 
+	// アラーム音の再生（ビープ音）
 	function playAlarmSound() {
 		if (!isSoundEnabled) return;
 
@@ -815,8 +857,8 @@
 			const osc = audioCtx.createOscillator();
 			const gain = audioCtx.createGain();
 			osc.type = 'sine';
-			osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-			osc.frequency.setValueAtTime(440, audioCtx.currentTime + 0.2);
+			osc.frequency.setValueAtTime(880, audioCtx.currentTime); // A5音
+			osc.frequency.setValueAtTime(440, audioCtx.currentTime + 0.2); // A4音へ変化
 			
 			gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
 			gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
@@ -831,6 +873,7 @@
 		}
 	}
 
+	// 通知バナー表示
 	function showBanner(message) {
 		const banner = document.getElementById('notification-banner');
 		const titleElem = document.getElementById('banner-title');
@@ -838,11 +881,13 @@
 		banner.style.display = 'block';
 	}
 
+	// 通知バナー非表示
 	function closeBanner() {
 		const banner = document.getElementById('notification-banner');
 		banner.style.display = 'none';
 	}
 
+	// 隠し機能: レベル文字を5回高速タップでカウント加速（裏コマンド）
 	function handleSecretTap() {
 		secretTapCount++;
 		
@@ -862,6 +907,7 @@
 				levelBadge.classList.remove('secret-active');
 			}
 			
+			// タイマー作動中なら再スタートして反映
 			if (isRunning) {
 				pauseTimer();
 				startTimer();
